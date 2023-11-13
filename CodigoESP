@@ -1,1 +1,60 @@
+#include <WiFi.h>
+#include <FirebaseArduino.h>
+
+const char *ssid = "SeuSSID";
+const char *password = "SuaSenha";
+const char *host = "https://console.firebase.google.com/u/0/project/projetoiot-6f20f/database/projetoiot-6f20f-default-rtdb/data/~2F?hl=pt-br";
+const char *auth = "seu-token-de-autenticacao";
+
+const int pinLed = 14;  // Pino do LED
+const int pinLDR = A0;  // Pino do LDR
+const float limiarLDR = 2.0;  // Valor de limiar do LDR, ajuste conforme necessário
+
+void setup() {
+  Serial.begin(115200);
+
+  // Inicialização do Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Conectando ao WiFi...");
+  }
+  Serial.println("Conectado ao WiFi");
+
+  // Inicialização da conexão com o Firebase
+  Firebase.begin(host, auth);
+}
+
+void loop() {
+  // Leitura do sensor LDR
+  int sensorValue = analogRead(pinLDR);
+  float voltagem = sensorValue * (3.3 / 1023.0);  // Assume que o LDR está conectado a 3.3V
+
+  // Mostrar valor da voltagem no monitor serial
+  Serial.println("Valor do LDR: " + String(voltagem));
+
+  // Envia o dado da variável voltagem para a variável LDR no Firebase
+  Firebase.pushFloat("LDR", voltagem);
+
+  // Atualizar o estado do LED com base no valor do LDR
+if (voltagem > limiarLDR) {
+  Serial.println("Luz forte - LED apagado");
+  apagarLed();
+} else {
+  Serial.println("Luz fraca - LED aceso");
+  acenderLed();
+}
+
+
+
+  delay(5000); // Espera 5 segundos entre as iterações do loop
+}
+
+void acenderLed() {
+  digitalWrite(pinLed, HIGH);
+}
+
+void apagarLed() {
+  digitalWrite(pinLed, LOW);
+}
 
