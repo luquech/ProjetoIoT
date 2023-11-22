@@ -3,8 +3,8 @@
 
 const char *ssid = "SeuSSID";
 const char *password = "SuaSenha";
-const char *host = "https://console.firebase.google.com/u/0/project/projetoiot-6f20f/database/projetoiot-6f20f-default-rtdb/data/~2F?hl=pt-br";
-const char *auth = "seu-token-de-autenticacao";
+const char *host = "projetoiot-6f20f-default-rtdb.firebaseio.com";
+const char *auth = "WLGlqx2B2UYzwOQenIkvRLwwQRidhgx1sTokE3k9";
 
 const int pinLed = 14;  // Pino do LED
 const int pinLDR = A0;  // Pino do LDR
