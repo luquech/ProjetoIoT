@@ -25,29 +25,45 @@ void setup() {
   Firebase.begin(host, auth);
 }
 
+unsigned long lastReadingTime = 0;
+unsigned long readingInterval = 59500;  // Intervalo de 60 segundos entre leituras
+
 void loop() {
+  unsigned long currentTime = millis();
+
+  // Verifica se é hora de fazer uma nova leitura
+  if (currentTime - lastReadingTime >= readingInterval) {
+    leitura();  // Executa a leitura do sensor LDR e envia para o Firebase
+    lastReadingTime = currentTime;  // Atualiza o último tempo de leitura
+  }
+
+  // Verifica o estado da luz no Firebase
+  if (Firebase.getBool(firebaseData, "/luz")) {
+    if (firebaseData.boolData()) {
+      Serial.println("Luz Acesa");
+      acenderLed();
+    } else {
+      Serial.println("Luz Apagada");
+      apagarLed();
+    }
+  } else {
+    Serial.println("Não foi possível conectar ao Firebase");
+  }
+  delay(500);
+}
+
+void leitura() {
   // Leitura do sensor LDR
   int sensorValue = analogRead(pinLDR);
   float voltagem = sensorValue * (3.3 / 1023.0);  // Assume que o LDR está conectado a 3.3V
 
-  // Mostrar valor da voltagem no monitor serial
+  // Mostra o valor da voltagem no monitor serial
   Serial.println("Valor do LDR: " + String(voltagem));
 
-  // Envia o dado da variável voltagem para a variável LDR no Firebase
-  Firebase.pushFloat("LDR", voltagem);
+  String timestamp = Firebase.time();
 
-  // Atualizar o estado do LED com base no valor do LDR
-if (voltagem > limiarLDR) {
-  Serial.println("Luz forte - LED apagado");
-  apagarLed();
-} else {
-  Serial.println("Luz fraca - LED aceso");
-  acenderLed();
-}
-
-
-
-  delay(5000); // Espera 5 segundos entre as iterações do loop
+  // Envia o dado da variável voltagem para a variável LDR no Firebase com um timestamp
+  Firebase.pushFloat("LDR/" + timestamp, voltagem);
 }
 
 void acenderLed() {
