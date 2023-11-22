@@ -75,7 +75,7 @@ void atual() {
   Serial.println("Valor Atual do LDR: " + String(voltagem));
 
   // Envia o dado da variável voltagem para a variável LDR no Firebase
-  Firebase.setFloat("LDRATUAL", voltagem);
+  Firebase.setFloat("LDRATUAL/volt", voltagem);
 }
 
 void acenderLed() {
