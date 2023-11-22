@@ -36,7 +36,7 @@ void loop() {
     leitura();  // Executa a leitura do sensor LDR e envia para o Firebase
     lastReadingTime = currentTime;  // Atualiza o último tempo de leitura
   }
-
+  atual();
   // Verifica o estado da luz no Firebase
   if (Firebase.getBool(firebaseData, "/luz")) {
     if (firebaseData.boolData()) {
@@ -58,12 +58,24 @@ void leitura() {
   float voltagem = sensorValue * (3.3 / 1023.0);  // Assume que o LDR está conectado a 3.3V
 
   // Mostra o valor da voltagem no monitor serial
-  Serial.println("Valor do LDR: " + String(voltagem));
+  Serial.println("Valor armazenado do LDR: " + String(voltagem));
 
   String timestamp = Firebase.time();
 
   // Envia o dado da variável voltagem para a variável LDR no Firebase com um timestamp
   Firebase.pushFloat("LDR/" + timestamp, voltagem);
+}
+
+void atual() {
+  // Leitura do sensor LDR
+  int sensorValue = analogRead(pinLDR);
+  float voltagem = sensorValue * (3.3 / 1023.0);  // Assume que o LDR está conectado a 3.3V
+
+  // Mostrar valor da voltagem no monitor serial
+  Serial.println("Valor Atual do LDR: " + String(voltagem));
+
+  // Envia o dado da variável voltagem para a variável LDR no Firebase
+  Firebase.setFloat("LDRATUAL", voltagem);
 }
 
 void acenderLed() {
