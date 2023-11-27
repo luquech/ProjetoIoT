@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Light Monitor</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <center>
+    <h1> My light monitor</h1>
+    <h2><span id="valorLDR"></span></h2>
+     <canvas id="ldrChart" width="500" height="150"></canvas>
+    <h2 id="lightStatus">Status da Luz: Aguardando atualização...</h2>
+    <button id="toggleButton">Acender/Apagar</button>
+  </center>
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>
