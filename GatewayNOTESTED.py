@@ -52,11 +52,19 @@ def read_ldr_data():
     return ldr_data
 
 def upload_ldr_data():
-    current_ldr_data = read_ldr_data()
-    print("LDR Data:", current_ldr_data)
+    current_ldr_data_str = read_ldr_data()
+    
+    try:
+        current_ldr_data_float = float(current_ldr_data_str)
+        print("LDR Data (float):", current_ldr_data_float)
+        
+        # Enviar os dados LDR como float para o caminho "LDRATUAL" do Firebase
+        db.reference("LDRATUAL").set(current_ldr_data_float)
+        
+    except ValueError:
+        print(f"Erro ao converter os dados LDR: {current_ldr_data_str} não é um valor válido em ponto flutuante.")
 
-    # Enviar os dados LDR para o caminho "LDRATUAL" do Firebase
-    db.reference("LDRATUAL").set(current_ldr_data)
+# Restante do código...
 
 def log_ldr_data():
     while True:
@@ -64,16 +72,23 @@ def log_ldr_data():
         time.sleep(1800)
 
         # Obter dados LDR
-        current_ldr_data = read_ldr_data()
+        current_ldr_data_str = read_ldr_data()
 
-        # Obter data e hora atual
-        current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            # Tentar converter os dados LDR para float
+            current_ldr_data_float = float(current_ldr_data_str)
+            
+            # Obter data e hora atual no formato desejado
+            current_datetime = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
-        # Criar registro com data, hora e dados LDR
-        log_entry = {"datetime": current_datetime, "data": current_ldr_data}
+            # Criar registro com apenas o valor do LDR
+            log_entry = {"value": current_ldr_data_float}
 
-        # Adicionar registro ao caminho "LDR" no Firebase
-        db.reference("LDR").push(log_entry)
+            # Adicionar registro ao caminho "LDR" no Firebase com a chave única como data e hora
+            db.reference(f"LDR/{current_datetime}").set(log_entry)
+
+        except ValueError:
+            print(f"Erro ao converter os dados LDR para float: {current_ldr_data_str}")
 
 try:
     upload_ldr_data()
