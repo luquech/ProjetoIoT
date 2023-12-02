@@ -1,4 +1,3 @@
-import serial
 import firebase_admin
 from firebase_admin import credentials, db
 import time
@@ -10,24 +9,30 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://projetoiot-6f20f-default-rtdb.firebaseio.com/'
 })
 
-# Configuração da porta serial Bluetooth para o segundo ESP32
-bluetooth_device_name = "Nome_do_Dispositivo"  # Substitua pelo nome do seu dispositivo Bluetooth
-baud_rate_control = 9600
+# Configuração do dispositivo Bluetooth
+bluetooth_device_name = "ESP32_DESESPERO"  # Substitua pelo nome do seu dispositivo Bluetooth
 
 def discover_device_address(device_name):
     devices = bluetooth.discover_devices(lookup_names=True)
-    for addr, name, _ in devices:
+    for addr, name in devices:
         if name == device_name:
             return addr
 
-# Função para enviar comandos para o segundo ESP32 com base na variável do Firebase
-def control_lights(value):
-    bluetooth_address_control = discover_device_address(bluetooth_device_name)
-    ser_control = serial.Serial(bluetooth_address_control, baud_rate_control)
-    ser_control.write(value.encode())
-    ser_control.close()
+    raise ValueError(f"Device with name '{device_name}' not found.")
 
-# Função para ler a variável do Firebase e enviar para o segundo ESP32
+# Descubra o endereço Bluetooth do dispositivo
+bluetooth_address_control = discover_device_address(bluetooth_device_name)
+
+# Escolha o canal RFCOMM desejado (você pode ajustar conforme necessário)
+bluetooth_channel_control = 1
+
+# Configuração do socket Bluetooth
+sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+sock.connect((bluetooth_address_control, bluetooth_channel_control))
+
+def control_lights(value):
+    sock.send(value.encode())
+
 def read_and_send():
     while True:
         luz_state = db.reference("luz").get()
@@ -43,3 +48,5 @@ try:
 
 except KeyboardInterrupt:
     print("Programa encerrado.")
+finally:
+    sock.close()  # Certifique-se de fechar o socket ao finalizar o programa
