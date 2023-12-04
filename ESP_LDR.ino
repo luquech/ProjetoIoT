@@ -38,7 +38,7 @@ void loop() {
   }
 
   // Leitura do sensor LDR
-  float ldrValue = analogRead(LDR_PIN);
+  float ldrValue = digitalRead(LDR_PIN);
 
   // Envie o valor do sensor LDR via Bluetooth
   SerialBT.print("LDR Value: ");
