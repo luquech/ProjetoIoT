@@ -28,18 +28,12 @@ onValue(LDR2, onNewData('valorLDR'));
 
 function onNewData(currentValueEl) {
   return function(snapshot) {
-    var readings = snapshot.val();
-    if (readings) {
-      var currentValue;
-      var data = [];
-      var labels = [];
-      for (var key in readings) {
-        currentValue = readings[key];
-        var formattedValue = currentValue.toFixed(2);  // Limita para 2 casas decimais
-        data.push(formattedValue);
-        labels.push(key);
-      }
+    var reading = snapshot.val();
+    if (typeof reading === 'number') {
+      var formattedValue = reading.toFixed(2); // Limita para 2 casas decimais
       document.getElementById(currentValueEl).innerText = "Voltagem Atual " + formattedValue + 'V';
+    } else {
+      console.error("O valor lido do Firebase não é um número válido.");
     }
   };
 }
@@ -170,3 +164,4 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLightStatus();
   });
 });
+
