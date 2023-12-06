@@ -1,4 +1,4 @@
-#define LDR_PIN A0  // Pino analógico ao qual o sensor LDR está conectado
+#define LDR_PIN 4 // Pino analógico ao qual o sensor LDR está conectado
 #define DEVICE_NAME "ESP32_LDR"
 
 #include <BluetoothSerial.h>
@@ -37,11 +37,12 @@ void loop() {
     onBluetoothDisconnect();
   }
 
-  // Leitura do sensor LDR
-  float ldrValue = analogRead(LDR_PIN);
+  // Valor fixo para o sensor LDR
+  int sensorValue = analogRead(LDR_PIN);
+  float ldrValue = sensorValue * (3.3 / 1023.0);
 
-  // Envie o valor do sensor LDR via Bluetooth
-  SerialBT.print("LDR Value: ");
+  // Envie o valor fixo do sensor LDR via Bluetooth
+  Serial.println(ldrValue);
   SerialBT.println(ldrValue);
 
   delay(1000);  // Atraso opcional para evitar leituras muito frequentes
