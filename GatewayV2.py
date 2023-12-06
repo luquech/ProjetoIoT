@@ -4,6 +4,7 @@ import time
 import bluetooth
 import datetime
 import threading
+import signal
 
 # Configuração do Firebase
 cred = credentials.Certificate("/home/lucas/Downloads/projetoiot-6f20f-firebase-adminsdk-zwnv8-d892e9e87c.json")
@@ -63,28 +64,35 @@ def read_and_send():
         # Enviar o estado da luz para o segundo ESP32
         control_lights("LOW" if luz_state else "HIGH")
 
+        time.sleep(2)
+
 def upload_ldr_data():
-    current_ldr_data_str = read_ldr_data()
+    while True:
+        try:
+            current_ldr_data_str = read_ldr_data()
 
-    try:
-        # Remove o prefixo "LDR Value:" e então converte para float
-        current_ldr_data_float = float(current_ldr_data_str.replace("LDR Value:", "").strip())
-        print("Dados LDR (float):", current_ldr_data_float)
+            # O valor já é numérico, não é necessário remover o prefixo e converter
+            current_ldr_data_float = float(current_ldr_data_str)
+            print("Dados LDR (float):", current_ldr_data_float)
 
-        # Enviar os dados LDR como float para o caminho "LDRATUAL" do Firebase
-        db.reference("LDRATUAL").set(current_ldr_data_float)
+            # Enviar os dados LDR como float para o caminho "LDRATUAL" do Firebase
+            db.reference("LDRATUAL").set(current_ldr_data_float)
 
-    except ValueError:
-        print(f"Erro ao converter os dados LDR: {current_ldr_data_str} não é um valor válido em ponto flutuante.")
+        except ValueError as e:
+            print(f"Erro ao converter os dados LDR: {current_ldr_data_str} - {e}")
+
+        time.sleep(2)  # Ajuste o tempo de espera conforme necessário
+
+
 
 
 def log_ldr_data():
     while True:
         # Aguardar 30 minutos
-        time.sleep(15)
+        time.sleep(5)
 
         # Obter dados LDR
-        current_ldr_data_str = read_ldr_data()
+        current_ldr_data_str = db.reference("LDRATUAL").get()
 
         try:
             # Obter data e hora atual no formato desejado
@@ -106,21 +114,33 @@ def log_ldr_data():
             print(f"Erro ao processar os dados LDR: {current_ldr_data_str}")
 
 
+def signal_handler(signum, frame):
+    print("Recebido sinal de interrupção")
+    # Adicione aqui qualquer limpeza ou ação necessária antes de encerrar
+
+
+# Configurar o manipulador de sinal
+signal.signal(signal.SIGINT, signal_handler)
+
 # Iniciar a função de log em uma thread separada
 log_thread = threading.Thread(target=log_ldr_data)
 log_thread.start()
+
+# Iniciar a função de upload em uma thread separada
+update_thread = threading.Thread(target=upload_ldr_data)
+update_thread.start()
+
 try:
     while True:
-        upload_ldr_data()
         read_and_send()
-        time.sleep(5)  # Aguarda 10 segundos entre cada iteração
+        time.sleep(5)  # Aguarda 5 segundos entre cada iteração
 except KeyboardInterrupt:
     print("Programa encerrado.")
 finally:
     gateway_sock.close()
     ldr_sock.close()
-
-
+    log_thread.join()
+    update_thread.join()
 
 
 
