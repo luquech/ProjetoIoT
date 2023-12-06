@@ -4,7 +4,6 @@ import time
 import bluetooth
 import datetime
 import threading
-import signal
 
 # Configuração do Firebase
 cred = credentials.Certificate("/home/lucas/Downloads/projetoiot-6f20f-firebase-adminsdk-zwnv8-d892e9e87c.json")
@@ -114,14 +113,6 @@ def log_ldr_data():
             print(f"Erro ao processar os dados LDR: {current_ldr_data_str}")
 
 
-def signal_handler(signum, frame):
-    print("Recebido sinal de interrupção")
-    # Adicione aqui qualquer limpeza ou ação necessária antes de encerrar
-
-
-# Configurar o manipulador de sinal
-signal.signal(signal.SIGINT, signal_handler)
-
 # Iniciar a função de log em uma thread separada
 log_thread = threading.Thread(target=log_ldr_data)
 log_thread.start()
@@ -136,6 +127,7 @@ try:
         time.sleep(5)  # Aguarda 5 segundos entre cada iteração
 except KeyboardInterrupt:
     print("Programa encerrado.")
+
 finally:
     gateway_sock.close()
     ldr_sock.close()
