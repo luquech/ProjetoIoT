@@ -1,5 +1,5 @@
 # ProjetoIoT
-Projeto da disciplina IoT 2023.3
+Projeto da disciplina IoT 2023.2
 
 # Projeto de IoT com ESP32 e Gateway em Ubuntu
 
