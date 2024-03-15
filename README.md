@@ -1,15 +1,29 @@
-# ProjetoIoT
-Projeto da disciplina IoT 2023.2
+# Projeto de IoT 2023.2 com ESP32, Gateway Ubuntu e Google Firebase
 
-# Projeto de IoT com ESP32 e Gateway em Ubuntu
+Este repositório contém o código-fonte para um projeto de Internet das Coisas (IoT) que utiliza ESP32 como dispositivos de borda (nodes), um gateway executado em um ambiente Ubuntu e integração com o Google Firebase para armazenamento e controle remoto.
 
-Este projeto consiste em desenvolver um sistema de IoT utilizando dois ESP32 como nodes e um gateway rodando em Ubuntu(Raspberry Pi OS). Os nodes se conectam ao gateway via Bluetooth, e o sistema é programado em C++, Python e JavaScript.
+## Componentes do Projeto
 
-## Funcionalidades Principais
-- Comunicação entre os nodes ESP32 e o gateway Ubuntu via Bluetooth.
-- Utilização de C++ para programação dos nodes ESP32.
-- Desenvolvimento de scripts Python para funcionalidades específicas dos nodes.
-- Interface de usuário web desenvolvida em JavaScript para interação com o sistema.
+### Nodes IoT (ESP32)
+- Dois nodes IoT baseados em ESP32, programados em C++ e Python, respectivamente.
+- Um node é responsável por acionar uma luz.
+- O outro node monitora a luminosidade do ambiente.
 
-O webApp pode ser acessado no link
-https://ldrteste.andersonlucas.repl.co/
+### Gateway (Ubuntu)
+- Um gateway que atua como intermediário entre os nodes e o Google Firebase.
+- Desenvolvido para ser executado em um ambiente Ubuntu.
+- Usa Bluetooth para se comunicar com os nodes IoT.
+
+### Integração com o Google Firebase
+- O gateway se comunica com o Google Firebase para enviar e receber dados dos nodes.
+- Utiliza Firebase Realtime Database para armazenamento e sincronização em tempo real.
+
+### Aplicativo de Controle
+- Um aplicativo de controle programado em JavaScriot que interage com o Google Firebase para permitir o monitoramento e controle remoto dos nodes IoT. Pode ser acessado via https://ldrteste.andersonlucas.repl.co/
+
+## Tecnologias Utilizadas
+- Linguagens: C++, Python, JavaScript (para o aplicativo de controle).
+- Plataformas: ESP32, Ubuntu.
+- Protocolos: Bluetooth, Firebase Realtime Database.
+
+Este projeto demonstra a integração de dispositivos de borda (ESP32) com um gateway e uma plataforma de armazenamento em nuvem (Google Firebase), permitindo controle remoto e monitoramento de dispositivos IoT.
