@@ -19,7 +19,7 @@ Este repositório contém o código-fonte para um projeto de Internet das Coisas
 - Utiliza Firebase Realtime Database para armazenamento e sincronização em tempo real.
 
 ### Aplicativo de Controle
-- Um aplicativo de controle programado em JavaScriot que interage com o Google Firebase para permitir o monitoramento e controle remoto dos nodes IoT. Pode ser acessado via https://ldrteste.andersonlucas.repl.co/
+- Um aplicativo de controle programado em JavaScript que interage com o Google Firebase para permitir o monitoramento e controle remoto dos nodes IoT. Pode ser acessado via https://ldrteste.andersonlucas.repl.co/
 
 ## Tecnologias Utilizadas
 - Linguagens: C++, Python, JavaScript (para o aplicativo de controle).
